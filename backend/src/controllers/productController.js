@@ -1,6 +1,8 @@
 const Product = require("../models/product");
 const productStatus = require("../utils/enums/productStatus");
 const Category = require("../models/category");
+const Order = require("../models/order");// ✅ add this
+
 // @desc    Get list of approved products
 // @route   GET /api/products
 // @access  Customer
@@ -27,7 +29,7 @@ const getProducts = async (req, res, next) => {
 // @desc    Get list of approved products associated with seller
 // @route   GET /api/seller/products
 // @access  Seller
-const getProductsForSeller = async (req, res, next) => {
+const getProductsForSeller = async (req, res, next) => {// ✅ add this
   try {
     const products = await Product.find({
       status: productStatus.APPROVED,
@@ -37,6 +39,28 @@ const getProductsForSeller = async (req, res, next) => {
       return res.status(404).json({
         success: true,
         message: "No approved products found",
+        data: [],
+      });
+    }
+
+    res.status(200).json({ success: true, data: products });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+const getPendingProductsForSeller = async (req, res, next) => {
+  try {
+    const products = await Product.find({
+      status: { $in: [productStatus.PENDING, productStatus.APPROVED] }, // Match PENDING or APPROVED status ✅ add this for product anylsis page
+      sellerId: req.userId,
+    });
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({
+        success: true,
+        message: "No pending products found",
         data: [],
       });
     }
@@ -163,12 +187,42 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
+
+const getProductById = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    const product = await Product.findById(productId).populate("category", "name");
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const orderCount = await Order.countDocuments({
+      "products.product": productId,
+    });
+
+    res.json({
+      data: {
+        product,
+        orderCount,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 // @desc    Update product by seller
 // @route   PATCH /api/products/:productId
 // @access  seller
+
+
 const updateProduct = async (req, res, next) => {
   try {
-    const productId = req.params.id;
+    const productId = req.params.productId;// 👉 productId not id mod this
     const userId = req.userId; // Access userId from req.user
     const { name, description, price, images } = req.body;
 
@@ -260,10 +314,12 @@ const updateProductStatusToRejected = async (req, res, next) => {
 };
 module.exports = {
   getProducts,
+  getProductById,// 👉 added
   addProduct,
   deleteProduct,
   updateProduct,
   getProductsForSeller,
+  getPendingProductsForSeller, // 👉 added
   getProductsForAdminToApprove,
   updateProductStatusToApproved,
   updateProductStatusToRejected,
