@@ -1,23 +1,18 @@
-import { Route, Routes } from "react-router-dom";
-
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
-    <div> 
+      <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/" element={<SignUpPage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
-    </div>
+      </BrowserRouter>
   );
 }
-
-<<<<<<< HEAD
 export default App;
-=======
-export default App;
->>>>>>> c1472472f8babda306248814a717968244fbe5f1
