@@ -2,14 +2,14 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const generateTokenAndSetCookie = require("../utils/generateTokenAndSetCookie");
 const signup = async (req, res, next) => {
-  const { name, email, password, role, profileImage } = req.body;
+  const { name, email, password, role } = req.body;
+  const profileImageBuffer = req.file ? req.file.buffer : null;
+
   try {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User already exists" });
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
     const newUser = new User({
@@ -17,17 +17,17 @@ const signup = async (req, res, next) => {
       email,
       password,
       role,
-      profileImage,
+      profileImage: profileImageBuffer ? profileImageBuffer.toString("base64") : "",
     });
+
     await newUser.save();
 
-    payload = {
+    const payload = {
       userId: newUser._id,
       role: newUser.role,
     };
-  
-    // jwt
-    console.log(generateTokenAndSetCookie(res, payload));
+
+    generateTokenAndSetCookie(res, payload);
 
     res.status(201).json({
       message: "User registered successfully",
@@ -40,32 +40,30 @@ const signup = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error); // Pass the error to the error-handling middleware
+    next(error);
   }
 };
 
 const login = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
+
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
-    payload = {
+
+    const payload = {
       userId: user._id,
       role: user.role,
     };
 
-    const token = generateTokenAndSetCookie(res, payload);
+    const token = generateTokenAndSetCookie(res, payload, rememberMe);
 
     res.status(200).json({
       message: "Login successful",
