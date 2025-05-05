@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate , useParams } from "react-router-dom";
-
+import './styles/ProductDetailsPage.css';
 const ProductDetailsPage = () => {
   const navigate = useNavigate(); // ✅ This line is needed
   const { productId } = useParams();
@@ -66,6 +66,14 @@ const handleEditProduct = () => {
       </div>
     <button onClick={handleEditProduct}>Edit Product</button>
     <button onClick={handleDeleteProduct}>Delete Product</button>
+    <br />
+    <aside
+        type="button"
+        className="back-button"
+        onClick={() => navigate(`/product-analytics`)}
+      >
+        ← Back to Analytics
+    </aside>   
     </div>
   );
 };

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
+import './styles/ProductAnalytics.css';
+
 
 function ProductAnalytics() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -64,6 +68,13 @@ function ProductAnalytics() {
           </tbody>
         </table>
       )}
+      <aside
+        type="button"
+        className="back-button"
+        onClick={() => navigate(`/seller-home`)}
+      >
+        ← Back to Add Product
+    </aside>   
     </div>
   );
 }

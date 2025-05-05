@@ -13,7 +13,7 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try { // Send the data using an HTTP POST request to the backend
-      const res = await axios.post('http://localhost:5000/login', {
+      const res = await axios.post('http://localhost:3000/login', {
         ...values,
         rememberMe,
       }, { withCredentials: true }); // allows cookies to be sent and stored in the browser

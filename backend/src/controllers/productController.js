@@ -220,11 +220,11 @@ const getProductById = async (req, res) => {
 // @access  seller
 
 
-const updateProduct = async (req, res, next) => {
+const updateProduct = async (req, res, next) => {//  ✅ added stock so seller can update the stock num too
   try {
-    const productId = req.params.productId;// 👉 productId not id mod this
-    const userId = req.userId; // Access userId from req.user
-    const { name, description, price, images } = req.body;
+    const productId = req.params.productId;
+    const userId = req.userId;
+    const { name, description, price, images, stock } = req.body;
 
     const product = await Product.findById(productId);
     if (!product) {
@@ -237,23 +237,30 @@ const updateProduct = async (req, res, next) => {
     if (product.sellerId.toString() !== userId) {
       return res.status(403).json({
         success: false,
-        message:
-          "Forbidden - you do not have permission to update this product",
+        message: "Forbidden - you do not have permission to update this product",
       });
     }
 
+    // Update fields
     if (name) product.name = name;
     if (description) product.description = description;
     if (price) product.price = price;
     if (images) product.images = images;
+    if (typeof stock !== "undefined") product.stock = stock;
 
     await product.save();
 
-    res.status(200).json({ success: true, data: product });
-  } catch (error) {
-    next(error);
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      data: { product },
+    });
+
+  } catch (err) {
+    next(err);
   }
 };
+
 
 // @desc    Approve product by admin
 // @route   GET /api/admin/products/:productId/approve

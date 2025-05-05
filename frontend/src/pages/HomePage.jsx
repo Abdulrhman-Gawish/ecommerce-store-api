@@ -6,8 +6,5 @@ const HomePage = () => {
   )
 }
 
-<<<<<<< HEAD
 export default HomePage	
-=======
-export default HomePage;
->>>>>>> origin/main
+
