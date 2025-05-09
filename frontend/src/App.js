@@ -1,18 +1,18 @@
-import HomePage from "./pages/HomePage";
+import CustomerHomePage from "./pages/customer/CustomerHomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
-      <BrowserRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<SignUpPage />} />
-        <Route path="/home" element={<HomePage />} />
+        <Route path="/customer/home" element={<CustomerHomePage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
-      </BrowserRouter>
+    </BrowserRouter>
   );
 }
 export default App;
