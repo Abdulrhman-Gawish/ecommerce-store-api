@@ -29,8 +29,10 @@ function Login() {
         navigate("/customer/home");
       } else if (userRole === "admin") {
         navigate("/admin/dashboard");
+      } else if (userRole === "seller") {
+        navigate("/seller/home");
       } else {
-        navigate("/home"); 
+        navigate("/home");
       }
 
       navigate("/Home");
