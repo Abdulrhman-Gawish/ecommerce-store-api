@@ -25,8 +25,7 @@ function SignUpPage() {
     setValues({ ...values, profileImage: file });
     const reader = new FileReader(); //  reads files on the client-side (f el browser to show the selected image)
     reader.onloadend = () => setPreviewImage(reader.result);
-    if (file)
-       reader.readAsDataURL(file);
+    if (file) reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (event) => {
@@ -56,14 +55,24 @@ function SignUpPage() {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        withCredentials: true, 
+        withCredentials: true,
       });
 
       alert(res.data.message);
-      navigate("/Home"); // redirect to protected page directly
+      const userRole = res.data.user?.role; // get role and return to home page basen on role
+
+      if (userRole === "customer") {
+        navigate("/customer/home");
+      } else if (userRole === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/home"); 
+      }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Registration failed. Please try again.");
+      alert(
+        err.response?.data?.message || "Registration failed. Please try again."
+      );
     }
   };
 
@@ -81,27 +90,45 @@ function SignUpPage() {
 
             <form onSubmit={handleSubmit}>
               <div className="input-group mb-3">
-                <input type="text" className="form-control form-control-lg bg-light fs-6" placeholder="Username"
-                  onChange={(e) => setValues({ ...values, name: e.target.value })}
+                <input
+                  type="text"
+                  className="form-control form-control-lg bg-light fs-6"
+                  placeholder="Username"
+                  onChange={(e) =>
+                    setValues({ ...values, name: e.target.value })
+                  }
                   required
                 />
               </div>
               <div className="input-group mb-3">
-                <input type="email" className="form-control form-control-lg bg-light fs-6" placeholder="Email"
-                  onChange={(e) => setValues({ ...values, email: e.target.value })}
+                <input
+                  type="email"
+                  className="form-control form-control-lg bg-light fs-6"
+                  placeholder="Email"
+                  onChange={(e) =>
+                    setValues({ ...values, email: e.target.value })
+                  }
                   required
                 />
               </div>
               <div className="input-group mb-3">
-                <input type="password" className="form-control form-control-lg bg-light fs-6" placeholder="Password"
-                  onChange={(e) => setValues({ ...values, password: e.target.value })}
+                <input
+                  type="password"
+                  className="form-control form-control-lg bg-light fs-6"
+                  placeholder="Password"
+                  onChange={(e) =>
+                    setValues({ ...values, password: e.target.value })
+                  }
                   required
                 />
               </div>
 
               <div className="input-group mb-3">
-                <select className="form-select"
-                  onChange={(e) => setValues({ ...values, role: e.target.value })}
+                <select
+                  className="form-select"
+                  onChange={(e) =>
+                    setValues({ ...values, role: e.target.value })
+                  }
                 >
                   <option value="customer">Customer</option>
                   <option value="seller">Seller</option>
@@ -110,27 +137,47 @@ function SignUpPage() {
               </div>
 
               <div className="input-group mb-3">
-                <input type="file" accept="image/*" className="form-control"
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="form-control"
                   onChange={handleImageChange}
                 />
               </div>
-              {previewImage && ( <div className="mb-3">
-                  <img src={previewImage} alt="Preview" className="rounded-circle" width="100" height="100" />
+              {previewImage && (
+                <div className="mb-3">
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="rounded-circle"
+                    width="100"
+                    height="100"
+                  />
                 </div>
               )}
 
               <div className="input-group mb-3 d-flex justify-content-between">
                 <div className="form-check">
-                  <input type="checkbox" className="form-check-input" id="formCheck" checked={agreeTerms}
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="formCheck"
+                    checked={agreeTerms}
                     onChange={() => setAgreeTerms(!agreeTerms)}
                   />
-                  <label htmlFor="formCheck" className="form-check-label text-secondary">
+                  <label
+                    htmlFor="formCheck"
+                    className="form-check-label text-secondary"
+                  >
                     <small>Agree to Terms and Conditions</small>
                   </label>
                 </div>
               </div>
               <div className="input-group mb-3">
-                <button type="submit" className="btn btn-lg btn-primary w-100 fs-6">
+                <button
+                  type="submit"
+                  className="btn btn-lg btn-primary w-100 fs-6"
+                >
                   SIGN UP
                 </button>
               </div>
@@ -138,10 +185,7 @@ function SignUpPage() {
 
             <div className="row">
               <small>
-                Already have an account?{" "}
-                <Link to="/login">
-                  Login
-                </Link>
+                Already have an account? <Link to="/login">Login</Link>
               </small>
             </div>
           </div>
