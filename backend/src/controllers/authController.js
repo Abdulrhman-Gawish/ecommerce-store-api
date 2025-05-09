@@ -40,6 +40,12 @@ const signup = async (req, res, next) => {
       },
     });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already registered. Please use a different email.",
+      });
+    }
     next(error);
   }
 };

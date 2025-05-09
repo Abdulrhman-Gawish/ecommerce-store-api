@@ -14,7 +14,11 @@ router
     checkRole([userRole.ADMIN]),
     categoryController.createCategory
   )
-  .get(verifyToken, categoryController.getCategories);
+  .get(
+    verifyToken,
+    checkRole([userRole.CUSTOMER]),
+    categoryController.getCategories
+  );
 
 router
   .route("/:categoryId")
