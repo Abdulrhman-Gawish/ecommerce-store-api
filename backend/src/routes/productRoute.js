@@ -36,6 +36,15 @@ router
     productController.getProductsForSeller
   );
 
+router// 👉 added
+  .route("/seller/products/pending")
+  .get(
+    verifyToken,
+    checkRole([userRole.SELLER]),
+    productController.getPendingProductsForSeller
+  );
+
+
 router
   .route("/admin/products")
   .get(
@@ -45,15 +54,22 @@ router
   );
 
 router
-  .route("/products/:productId")
+
+router
+  .route('/products/:productId')
+  .get(productController.getProductById)
+  
   .delete(
     verifyToken,
     checkRole([userRole.ADMIN, userRole.SELLER]),
     productController.deleteProduct
   )
-  .patch(verifyToken, checkRole([userRole.SELLER]), [
-    productController.updateProduct,
-  ]);
+  
+  .patch(
+    verifyToken,
+    checkRole([userRole.SELLER]),
+    productController.updateProduct
+  );
 
 router
   .route("/admin/products/:productId/approve")
