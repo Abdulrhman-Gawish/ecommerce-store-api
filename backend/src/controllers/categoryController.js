@@ -42,17 +42,19 @@ const deleteCategory = async (req, res, next) => {
   }
 };
 
+
+// update response format to match 
 const getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find({});
+    const categories = await Category.find({}, { __v: false , description: false});
     if (!categories || categories.length === 0) {
       return res.status(404).json({
         success: true,
         message: "No approved products found",
-        data: [],
+        categories: [],
       });
     }
-    res.status(200).json({ success: true, data: categories });
+    res.status(200).json({ success: true, categories: categories });
   } catch (error) {
     next(error);
   }
